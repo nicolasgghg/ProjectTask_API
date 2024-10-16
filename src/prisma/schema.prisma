@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User{
+model Users {
   id Int @id @default(autoincrement())
   name String
   email String @unique
@@ -26,5 +26,6 @@ model Task{
   title String
   description String  
   userId Int
-  user User @relation(fields: [userId], references: [id])
+  user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
