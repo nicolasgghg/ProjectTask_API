@@ -18,6 +18,14 @@ export class TaskRepository {
         })
     }
 
+    async countTaskByUserId(userId: number){
+        return await task.count({
+            where:{
+                userId: userId,
+            }
+        })
+    }
+
     async findMany() {
         return await task.findMany()
     }
@@ -28,13 +36,12 @@ export class TaskRepository {
         })
     }
 
-    async updateById(id: number, data: IDataTask) {
+    async updateById(id: number, data: Omit<IDataTask, 'userId'>) {
         return await task.update({
             where: { id },
             data: {
                 title: data.title,
                 description: data.description,
-                userId: data.userId,
             }
         })
     }

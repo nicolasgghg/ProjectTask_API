@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { TaskService } from "../Services/task.service";
+import { AppError } from "../Errors/AppError";
 
 
 export class taskController {
@@ -10,7 +11,9 @@ export class taskController {
     }
 
     createTask = async (req: Request, res: Response, next: NextFunction) => {
-        const data = req.body
+        const userId = Number(req.params.userId)
+        const data = { ...req.body, userId: userId }
+
         try {
             const dataTask = await this._taskService.createTask(data)
             res.status(201).json({
@@ -18,7 +21,14 @@ export class taskController {
                 data: dataTask,
             })
         } catch (error) {
-            next(error)
+            if (error instanceof AppError) {
+                res.status(error.statusCode).json({
+                    message: error.message,
+                    code: error.errorCode,
+                })
+            } else {
+                next(error)
+            }
         }
     }
 
@@ -30,26 +40,41 @@ export class taskController {
                 data,
             })
         } catch (error) {
-            next(error)
+            if (error instanceof AppError) {
+                res.status(error.statusCode).json({
+                    message: error.message,
+                    code: error.errorCode,
+                })
+            } else {
+                next(error)
+            }
         }
     }
 
     getTaskById = async (req: Request, res: Response, next: NextFunction) => {
-        const id = Number(req.params.id)
+        const taskId = Number(req.params.id)
         try {
-            const data = await this._taskService.getTaskById(id)
+            const data = await this._taskService.getTaskById(taskId)
             res.status(200).json({
                 message: "Success",
                 data,
             })
         } catch (error) {
-            next(error)
+            if (error instanceof AppError) {
+                res.status(error.statusCode).json({
+                    message: error.message,
+                    code: error.errorCode,
+                })
+            } else {
+                next(error)
+            }
         }
     }
 
     updateTaskById = async (req: Request, res: Response, next: NextFunction) => {
-        const id = Number(req.params.id)
-        const data = req.body
+        const userId = Number(req.params.userId)
+        const id = Number(req.params.Id)
+        const data = { ...req.body, userId: userId }
         try {
             const updatedTaskData = await this._taskService.updateTaskById(id, data)
             res.status(200).json({
@@ -57,20 +82,31 @@ export class taskController {
                 data: updatedTaskData,
             })
         } catch (error) {
-            next(error)
+            if (error instanceof AppError) {
+                res.status(error.statusCode).json({
+                    message: error.message,
+                    code: error.errorCode,
+                })
+            } else {
+                next(error)
+            }
         }
     }
 
     deleteTaskById = async (req: Request, res: Response, next: NextFunction) => {
-        const id = Number(req.params.id)
+        const taskId = Number(req.params.taskId)
         try {
-            const updatedTaskData = await this._taskService.deleteTaskById(id)
-            res.status(404).json({
-                message: "Task Delete Successfully",
-                data: updatedTaskData,
-            })
+            await this._taskService.deleteTaskById(taskId)
+            res.status(204).send()
         } catch (error) {
-            next(error)
+            if (error instanceof AppError) {
+                res.status(error.statusCode).json({
+                    message: error.message,
+                    code: error.errorCode,
+                })
+            } else {
+                next(error)
+            }
         }
     }
 
