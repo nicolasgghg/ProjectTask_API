@@ -1,5 +1,4 @@
-import { UserRepository } from "../Repositories/user.repository";
-import { IDataUser } from "../Repositories/user.repository";
+import { UserRepository, IDataUser } from "../Repositories/user.repository";
 
 
 export class UserService {
