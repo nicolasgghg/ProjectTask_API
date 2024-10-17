@@ -1,4 +1,4 @@
-import { NextFunction, Request, response, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserService } from "../Services/user.service";
 
 
@@ -64,11 +64,8 @@ export class userController {
     deleteUserById = async (req: Request, res: Response, next: NextFunction) => {
         const id = Number(req.params.id)
         try {
-            const updatedUserData = await this._userService.deleteUserById(id)
-            res.status(404).json({
-                message: "User Delete Successfully",
-                data: updatedUserData,
-            })
+            await this._userService.deleteUserById(id)
+            res.status(200).send()
         } catch (error) {
             next(error)
         }

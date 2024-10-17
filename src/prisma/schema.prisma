@@ -18,10 +18,10 @@ model Users {
   name String
   email String @unique
   password String
-  tasks Task[]
+  tasks Tasks[]
 }
 
-model Task{
+model Tasks{
   id Int @id @default(autoincrement())
   title String
   description String  
