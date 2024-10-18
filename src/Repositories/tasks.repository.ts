@@ -4,6 +4,7 @@ export interface IDataTask {
     title: string
     description: string
     userId: number
+    completed?: boolean
 }
 
 export class TaskRepository {
@@ -14,6 +15,7 @@ export class TaskRepository {
                 title: data.title,
                 description: data.description,
                 userId: data.userId,
+                completed: data.completed,
             }
         })
     }
@@ -42,6 +44,7 @@ export class TaskRepository {
             data: {
                 title: data.title,
                 description: data.description,
+                completed: data.completed,
             }
         })
     }
