@@ -1,21 +1,12 @@
+import { CreateUserDto, UpdateUserDto } from "../dtos/user.dto"
 import user from "../Entities/users.entity"
 
-export interface IDataUser {
-    name: string
-    email: string
-    password: string
-}
+
 
 export class UserRepository {
 
-    async create(data: IDataUser) {
-        return await user.create({
-            data: {
-                name: data.name,
-                email: data.email,
-                password: data.password
-            }
-        })
+    async create(data: CreateUserDto) {
+        return await user.create({ data })
     }
 
     async findMany() {
@@ -28,14 +19,10 @@ export class UserRepository {
         })
     }
 
-    async updateById(id: number, data: IDataUser) {
+    async updateById(id: number, data: UpdateUserDto) {
         return await user.update({
             where: { id },
-            data: {
-                name: data.name,
-                email: data.email,
-                password: data.password
-            }
+            data
         })
     }
 
