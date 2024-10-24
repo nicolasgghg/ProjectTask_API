@@ -1,5 +1,6 @@
+import { CreateTaskDto, UpdateTaskDto } from "../dtos/task.dto";
 import { AppError } from "../Errors/AppError";
-import { IDataTask, TaskRepository } from "../Repositories/tasks.repository";
+import { TaskRepository } from "../Repositories/tasks.repository";
 import { UserService } from "./user.service";
 
 
@@ -7,7 +8,7 @@ export class TaskService {
     private _taskRepository = new TaskRepository
     private _userService = new UserService
 
-    async createTask(data: IDataTask) {
+    async createTask(data: CreateTaskDto) {
 
         await this._userService.userExist(data.userId)
 
@@ -25,7 +26,7 @@ export class TaskService {
         return await this._taskRepository.findById(id);
     }
 
-    async updateTaskById(id: number, data: Omit<IDataTask, 'userId'>) {
+    async updateTaskById(id: number, data: UpdateTaskDto) {
         await this.taskExist(id)
         return await this._taskRepository.updateById(id, data);
     }

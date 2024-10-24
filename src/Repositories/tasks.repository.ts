@@ -1,15 +1,9 @@
+import { CreateTaskDto, UpdateTaskDto } from "../dtos/task.dto"
 import task from "../Entities/tasks.entity"
-
-export interface IDataTask {
-    title: string
-    description: string
-    userId: number
-    completed?: boolean
-}
 
 export class TaskRepository {
 
-    async create(data: IDataTask) {
+    async create(data: CreateTaskDto) {
         return await task.create({
             data: {
                 title: data.title,
@@ -38,7 +32,7 @@ export class TaskRepository {
         })
     }
 
-    async updateById(id: number, data: Omit<IDataTask, 'userId'>) {
+    async updateById(id: number, data: UpdateTaskDto) {
         return await task.update({
             where: { id },
             data: {

@@ -1,11 +1,12 @@
+import { CreateUserDto, UpdateUserDto } from "../dtos/user.dto";
 import { AppError } from "../Errors/AppError";
-import { UserRepository, IDataUser } from "../Repositories/user.repository";
+import { UserRepository } from "../Repositories/user.repository";
 
 
 export class UserService {
     private _userRepository = new UserRepository
 
-    async createUser(data: IDataUser) {
+    async createUser(data: CreateUserDto) {
         return await this._userRepository.create(data);
     }
 
@@ -18,7 +19,7 @@ export class UserService {
         return await this._userRepository.findById(id);
     }
 
-    async updateUserById(id: number, data: IDataUser) {
+    async updateUserById(id: number, data: UpdateUserDto) {
         await this.userExist(id)
         return await this._userRepository.updateById(id, data);
     }

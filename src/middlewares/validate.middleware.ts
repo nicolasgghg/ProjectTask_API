@@ -9,7 +9,8 @@ export const validate = (dto: any) => {
 
 
         if (errors.length > 0) {
-            return res.status(400).json({ errors })
+            res.status(400).json({ errors })
+            return
         }
 
         req.body = data
