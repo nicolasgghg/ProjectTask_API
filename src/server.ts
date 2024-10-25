@@ -3,7 +3,7 @@ import express from 'express';
 import routes from "./Routes"
 
 const app = express();
-const PORT = process.env.SERVER_PORT || 3001;
+const PORT = 3000;
 
 
 app.use(express.json())
