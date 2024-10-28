@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { userController } from "../Controllers/user.controller";
+import { UserController } from "../Controllers/user.controller";
 import { validate } from "../middlewares/validate.middleware";
 import { CreateUserDto, UpdateUserDto } from "../dtos/user.dto";
 
 const router = Router()
 
-const users = new userController();
+const users = new UserController();
 
 router.post('/', validate(CreateUserDto), users.createUser)
 router.get('/', users.getAllUsers)

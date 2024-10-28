@@ -10,7 +10,7 @@ export class TaskService {
 
     async createTask(data: CreateTaskDto) {
 
-        await this._userService.userExist(data.userId)
+        await this._userService.ensureUserExistById(data.userId)
 
         await this.maxTaskForUser(data.userId)
 

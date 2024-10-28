@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { taskController } from "../Controllers/task.controller";
+import { TaskController } from "../Controllers/task.controller";
 import { validate } from "../middlewares/validate.middleware";
 import { CreateTaskDto, UpdateTaskDto } from "../dtos/task.dto";
 
 const router = Router()
 
-const tasks = new taskController();
+const tasks = new TaskController();
 
 router.post('/', validate(CreateTaskDto), tasks.createTask);
 router.get('/', tasks.getAllTasks)

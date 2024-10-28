@@ -19,6 +19,12 @@ export class UserRepository {
         })
     }
 
+    async findByEmail(email: string) {
+        return await user.findUnique({
+            where: { email }
+        })
+    }
+
     async updateById(id: number, data: UpdateUserDto) {
         return await user.update({
             where: { id },
