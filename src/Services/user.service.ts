@@ -2,7 +2,7 @@ import { CreateUserDto, UpdateUserDto } from "../dtos/user.dto";
 import { AppError } from "../Errors/AppError";
 import { UserRepository } from "../Repositories/user.repository";
 import bcrypt from "bcrypt";
-import jose from "jose";
+import * as jose from "jose";
 
 
 export class UserService {
