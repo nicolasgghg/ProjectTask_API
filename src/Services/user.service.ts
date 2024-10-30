@@ -1,7 +1,8 @@
 import { CreateUserDto, UpdateUserDto } from "../dtos/user.dto";
 import { AppError } from "../Errors/AppError";
 import { UserRepository } from "../Repositories/user.repository";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
+import jose from "jose";
 
 
 export class UserService {
@@ -9,30 +10,30 @@ export class UserService {
     private hashSaltRounds = 10
 
     async createUser(data: CreateUserDto) {
-        await this.ensureUserExistsByEmail(data.email)
+        await this.ensureUserDoesNotExistByEmail(data.email)
 
         const password = await this.generateHash(data.password)
 
-        return await this._userRepository.create({ ...data, password });
+        return await this._userRepository.create({ ...data, password })
     }
 
     async getAllUsers() {
-        return await this._userRepository.findMany();
+        return await this._userRepository.findMany()
     }
 
     async getUserById(id: number) {
         await this.ensureUserExistById(id)
-        return await this._userRepository.findById(id);
+        return await this._userRepository.findById(id)
     }
 
     async updateUserById(id: number, data: UpdateUserDto) {
         await this.ensureUserExistById(id)
-        return await this._userRepository.updateById(id, data);
+        return await this._userRepository.updateById(id, data)
     }
 
     async deleteUserById(id: number) {
         await this.ensureUserExistById(id)
-        return await this._userRepository.deleteById(id);
+        return await this._userRepository.deleteById(id)
     }
 
     async ensureUserExistById(id: number) {
@@ -40,16 +41,45 @@ export class UserService {
         if (!user) throw new AppError("User not found", 404, "USER_NOT_FOUND")
     }
 
-    private async ensureUserExistsByEmail(email: string) {
+    async authenticateUser(email: string, password: string) {
+        const user = await this.getUserByEmail(email)
+        await this.verifyHash(password, user.password)
+
+        const payload = { id: user.id, email: user.email }
+        const secret = new TextEncoder().encode(process.env.JWT_SECRET || "default_secret")
+        const alg = 'HS256'
+
+        const token = await new jose.SignJWT(payload)
+        .setProtectedHeader({ alg })
+        .setIssuedAt()
+        .setIssuer(`http://localhost:3000`)
+        .setSubject('users')
+        .setExpirationTime('1h')
+        .sign(secret)
+
+        return token
+    }
+
+    private async ensureUserDoesNotExistByEmail(email: string) {
         const existingUser = await this._userRepository.findByEmail(email)
-        if (existingUser) throw new AppError("Email has already been registered", 409, "EMAIL_ALREADY_REGISTERED");
+        if (existingUser) throw new AppError("Email already in use", 409, "EMAIL_ALREADY_IN_USE")
     }
 
     private async generateHash(word: string) {
-        return await bcrypt.hash(word, this.hashSaltRounds);
+        return await bcrypt.hash(word, this.hashSaltRounds)
     }
 
     private async verifyHash(word: string, hashedPassword: string) {
-        return await bcrypt.compare(word, hashedPassword);
-      }
+        const comparePasswords = await bcrypt.compare(word, hashedPassword)
+        if (!comparePasswords) throw new AppError("Password incorrect", 400, "PASSWORD_INCORRECT")
+        return comparePasswords
+    }
+
+    private async getUserByEmail(email: string) {
+        const user = await this._userRepository.findByEmail(email)
+        if (!user) throw new AppError("User not found", 404, "USER_NOT_FOUND")
+        return user
+    }
+
+
 }
