@@ -1,3 +1,4 @@
+import { Request } from "express";
 import { CreateUserDto, UpdateUserDto } from "../dtos/user.dto";
 import { AppError } from "../Errors/AppError";
 import { UserRepository } from "../Repositories/user.repository";
@@ -21,24 +22,41 @@ export class UserService {
         return await this._userRepository.findMany()
     }
 
-    async getUserById(id: number) {
+    async getUserById(id: number, req: Request) {
         await this.ensureUserExistById(id)
+
+        const userFromToken = req.user
+        this.userIsUser(id, Number(userFromToken?.id))
+
         return await this._userRepository.findById(id)
     }
 
-    async updateUserById(id: number, data: UpdateUserDto) {
-        await this.ensureUserExistById(id)
-        return await this._userRepository.updateById(id, data)
+    async updateUserById(data: UpdateUserDto) {
+        await this.ensureUserExistById(data.id)
+
+        if (data.password) data.password = await this.generateHash(data.password)
+
+        return await this._userRepository.updateById(data)
     }
 
-    async deleteUserById(id: number) {
-        await this.ensureUserExistById(id)
-        return await this._userRepository.deleteById(id)
+    async deleteUserById(req: Request) {
+        const userId = Number(req.params.id)
+        const userFromToken = req.user
+
+        await this.ensureUserExistById(userId)
+
+        this.userIsUser(userId, Number(userFromToken?.id))
+
+        return await this._userRepository.deleteById(userId)
     }
 
     async ensureUserExistById(id: number) {
         const user = await this._userRepository.findById(id)
         if (!user) throw new AppError("User not found", 404, "USER_NOT_FOUND")
+    }
+
+    async userIsUser(id: number, userByToken: number) {
+        if (id !== userByToken) throw new AppError("Operation not allowed")
     }
 
     async authenticateUser(email: string, password: string) {
@@ -50,12 +68,12 @@ export class UserService {
         const alg = 'HS256'
 
         const token = await new jose.SignJWT(payload)
-        .setProtectedHeader({ alg })
-        .setIssuedAt()
-        .setIssuer(`http://localhost:3000`)
-        .setSubject('users')
-        .setExpirationTime('1h')
-        .sign(secret)
+            .setProtectedHeader({ alg })
+            .setIssuedAt()
+            .setIssuer(`http://localhost:3000`)
+            .setSubject('users')
+            .setExpirationTime('1h')
+            .sign(secret)
 
         return token
     }
