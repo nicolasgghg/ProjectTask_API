@@ -2,6 +2,15 @@ import { NextFunction, Request, Response } from "express";
 import { UserService } from "../Services/user.service";
 import { handleSuccess, handleError } from "./handlesControllers";
 import { AppError } from "../Errors/AppError";
+import { JWTPayload } from "jose";
+
+
+declare module 'express-serve-static-core' {
+    interface Request {
+      user?: JWTPayload;
+    }
+  }
+
 
 export class UserController {
     private _userService: UserService;
@@ -30,9 +39,9 @@ export class UserController {
     };
 
     getUserById = async (req: Request, res: Response, next: NextFunction) => {
-        const id = Number(req.params.id);
         try {
-            const data = await this._userService.getUserById(id);
+            const id = Number(req.params.id);
+            const data = await this._userService.getUserById(id, req);
             handleSuccess(res, 200, "Success", data);
         } catch (error) {
             handleError(res, error, next);
@@ -40,10 +49,9 @@ export class UserController {
     };
 
     updateUserById = async (req: Request, res: Response, next: NextFunction) => {
-        const id = Number(req.params.id);
-        const data = req.body;
+        const data = req.body = { ...req.body, id: Number(req.user?.id as number) };
         try {
-            const updatedUserData = await this._userService.updateUserById(id, data);
+            const updatedUserData = await this._userService.updateUserById(data);
             handleSuccess(res, 200, "User Updated Successfully", updatedUserData);
         } catch (error) {
             handleError(res, error, next);
@@ -51,9 +59,8 @@ export class UserController {
     };
 
     deleteUserById = async (req: Request, res: Response, next: NextFunction) => {
-        const id = Number(req.params.id);
         try {
-            await this._userService.deleteUserById(id);
+            await this._userService.deleteUserById(req);
             handleSuccess(res, 204)
         } catch (error) {
             handleError(res, error, next);

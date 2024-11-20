@@ -25,7 +25,8 @@ export class UserRepository {
         })
     }
 
-    async updateById(id: number, data: UpdateUserDto) {
+    async updateById(dto: UpdateUserDto) {
+        const { id, ...data } = dto
         return await user.update({
             where: { id },
             data
