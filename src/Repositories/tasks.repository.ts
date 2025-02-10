@@ -26,6 +26,12 @@ export class TaskRepository {
         return await task.findMany()
     }
 
+    async findManyByUserId(userId: number) {
+        return await task.findMany({
+            where: { userId }
+        });
+    }
+
     async findById(id: number) {
         return await task.findUnique({
             where: { id }

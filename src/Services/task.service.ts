@@ -17,8 +17,8 @@ export class TaskService {
         return await this._taskRepository.create(data);
     }
 
-    async getAllTasks() {
-        return await this._taskRepository.findMany();
+    async getAllTasksByUser(userId:number) {
+        return await this._taskRepository.findManyByUserId(userId);
     }
 
     async getTaskById(id: number) {
