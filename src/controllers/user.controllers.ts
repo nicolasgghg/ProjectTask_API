@@ -1,6 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/user.services";
 import handleSuccess from "./handle.controllers";
+import * as jose from "jose";
+
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: jose.JWTPayload;
+  }
+}
 
 export class UserController {
   private _userService: UserService;
@@ -37,7 +44,12 @@ export class UserController {
       if (!userId) return;
 
       const data = await this._userService.getUserById(Number(userId));
-      handleSuccess(res, 200, "Success", data);
+
+      if (!data) {
+        throw new Error("User was not found");
+      }
+      const { password, ...userWithoutPassword } = data;
+      handleSuccess(res, 200, "Success", userWithoutPassword);
     } catch (error) {
       next(error);
     }

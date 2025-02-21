@@ -1,7 +1,13 @@
 import { CreateUserDto, UpdateUserDto } from "../dtos/user.dtos";
 import { UserRepository } from "../repositories/user.repositories";
 import bcrypt from "bcrypt";
-import jose from "jose";
+import * as jose from "jose";
+
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: jose.JWTPayload
+  }
+}
 
 export class UserService {
   private _userRepository = new UserRepository();

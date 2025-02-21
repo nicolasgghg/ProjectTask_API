@@ -1,12 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import * as jose from 'jose';
 
-declare global {
-    namespace Express {
-        interface Request {
-            user?: jose.JWTPayload;
-        }
-    }
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: jose.JWTPayload
+  }
 }
 
 export const auth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
