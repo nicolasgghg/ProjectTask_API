@@ -1,7 +1,6 @@
 import { Router } from "express";
-import users from "./user.route"
-import tasks from "./task.route"
-
+import users from "./user.routes"
+import tasks from "./task.routes"
 
 const router = Router()
 
