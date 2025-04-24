@@ -9,8 +9,9 @@ const router = Router()
 const users = new UserController();
 
 router.post('/authenticate', users.authenticateUser)
+router.get('/authenticateByToken', users.authenticateUserByToken)
 router.post('/', validate(CreateUserDto), users.createUser)
-router.get('/', users.getAllUsers)
+// router.get('/', auth, users.getAllUsers)
 router.get('/:id', auth, users.getUserById)
 router.patch('/:id', validate(UpdateUserDto), auth, users.updateUserById)
 router.delete('/:id', auth, users.deleteUserById)

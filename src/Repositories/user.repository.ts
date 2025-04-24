@@ -12,7 +12,7 @@ export class UserRepository {
     async findMany() {
         return await user.findMany()
     }
-
+ 
     async findById(id: number) {
         return await user.findUnique({
             where: { id }
