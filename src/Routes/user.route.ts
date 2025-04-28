@@ -13,7 +13,7 @@ router.get('/authenticateByToken', users.authenticateUserByToken)
 router.post('/', validate(CreateUserDto), users.createUser)
 // router.get('/', auth, users.getAllUsers)
 router.get('/:id', auth, users.getUserById)
-router.patch('/:id', validate(UpdateUserDto), auth, users.updateUserById)
-router.delete('/:id', auth, users.deleteUserById)
+router.patch('/', validate(UpdateUserDto), auth, users.updateUserById)
+router.delete('/', auth, users.deleteUserById)
 
 export default router;

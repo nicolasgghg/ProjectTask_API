@@ -31,23 +31,19 @@ export class UserService {
   }
 
   async updateUserById(data: UpdateUserDto) {
-    await this.ensureUserExistById(data.id);
 
     if (data.password) data.password = await this.generateHash(data.password);
 
     return await this._userRepository.updateById(data);
   }
 
-  async deleteUserById(req: Request) {
-    const userId = Number(req.params.id);
-    const userFromToken = req.user;
-
+  async deleteUserById(userId: number) {
     await this.ensureUserExistById(userId);
-
-    this.userIsUser(userId, Number(userFromToken?.id));
-
+  
     return await this._userRepository.deleteById(userId);
   }
+  
+  
 
   async ensureUserExistById(id: number) {
     const user = await this._userRepository.findById(id);

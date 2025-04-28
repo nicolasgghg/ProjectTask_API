@@ -15,7 +15,10 @@ export class UserRepository {
  
     async findById(id: number) {
         return await user.findUnique({
-            where: { id }
+            where: { id },
+            include:{
+                tasks: true
+            }
         })
     }
 

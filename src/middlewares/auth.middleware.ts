@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-
 declare module 'express-serve-static-core' {
     interface Request {
         user?: jose.JWTPayload;
@@ -12,10 +11,17 @@ declare module 'express-serve-static-core' {
 }
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        res.status(401).json({ message: "Token does not exist" });
+        return;
+    }
+
+    const token = authHeader.split(" ")[1];
 
     if (!token) {
-        res.status(401).json({ message: "Token does not exist" });
+        res.status(401).json({ message: "Token missing" });
         return;
     }
 

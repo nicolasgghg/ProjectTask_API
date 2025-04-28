@@ -43,7 +43,7 @@ export class UserController {
     try {
       const id = Number(req.params.id);
       const data = await this._userService.getUserById(id, req);
-      handleSuccess(res, 200, "Success", data);
+      handleSuccess(res, 200, "Success", {...data, password : null});
     } catch (error) {
       handleError(res, error, next);
     }
@@ -56,7 +56,7 @@ export class UserController {
     });
     try {
       const updatedUserData = await this._userService.updateUserById(data);
-      handleSuccess(res, 200, "User Updated Successfully", updatedUserData);
+      handleSuccess(res, 200, "User Updated Successfully", {...updatedUserData, password: null});
     } catch (error) {
       handleError(res, error, next);
     }
@@ -64,12 +64,14 @@ export class UserController {
 
   deleteUserById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this._userService.deleteUserById(req);
+      await this._userService.deleteUserById(Number(req.user?.id));
       handleSuccess(res, 204);
     } catch (error) {
       handleError(res, error, next);
     }
   };
+  
+  
 
   authenticateUser = async (
     req: Request,

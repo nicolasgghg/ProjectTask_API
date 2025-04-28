@@ -16,9 +16,7 @@ export class CreateUserDto{
 }
 
 export class UpdateUserDto{
-    @IsNumber()
-    id!: number;
-
+    
     @IsOptional()
     @IsNotEmpty()
     @IsString()
