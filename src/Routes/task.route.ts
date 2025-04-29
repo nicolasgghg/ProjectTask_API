@@ -9,10 +9,10 @@ const router = Router()
 const tasks = new TaskController();
 
 router.post('/', auth, validate(CreateTaskDto), tasks.createTask);
-router.get('/', tasks.getAllTasks)
-router.get('/:id', tasks.getTaskById)
-router.patch('/:id', validate(UpdateTaskDto), tasks.updateTaskById)
-router.delete('/:id', tasks.deleteTaskById)
+// router.get('/', tasks.getAllTasks)
+router.get('/:id', auth, tasks.getTaskById)
+router.patch('/:id', auth, validate(UpdateTaskDto), tasks.updateTaskById)
+router.delete('/:id', auth,tasks.deleteTaskById)
 
 
 export default router;

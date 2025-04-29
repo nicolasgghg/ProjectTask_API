@@ -12,10 +12,13 @@ export class UserRepository {
     async findMany() {
         return await user.findMany()
     }
-
+ 
     async findById(id: number) {
         return await user.findUnique({
-            where: { id }
+            where: { id },
+            include:{
+                tasks: true
+            }
         })
     }
 
@@ -25,7 +28,8 @@ export class UserRepository {
         })
     }
 
-    async updateById(id: number, data: UpdateUserDto) {
+    async updateById(dto: UpdateUserDto) {
+        const { id, ...data } = dto
         return await user.update({
             where: { id },
             data
