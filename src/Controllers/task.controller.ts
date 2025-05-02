@@ -27,6 +27,13 @@ export class TaskController {
       return;
     }
 
+    if (userId != data.userId) {
+      res
+        .status(403)
+        .json({ message: "TOKEN IS NOT COMPATIBLE WITH USER" });
+      return;
+    }
+
     try {
       const dataTask = await this._taskService.createTask({
         ...data,
