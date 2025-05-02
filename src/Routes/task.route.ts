@@ -11,6 +11,7 @@ const tasks = new TaskController();
 router.post('/', auth, validate(CreateTaskDto), tasks.createTask);
 // router.get('/', tasks.getAllTasks)
 router.get('/:id', auth, tasks.getTaskById)
+router.get('/', auth, tasks.getAllTaskByIdUser)
 router.patch('/:id', auth, validate(UpdateTaskDto), tasks.updateTaskById)
 router.delete('/:id', auth,tasks.deleteTaskById)
 

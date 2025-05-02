@@ -23,14 +23,7 @@ export class TaskController {
     if (!userId) {
       res
         .status(400)
-        .json({ message: "Invalid token payload: missing user ID" });
-      return;
-    }
-
-    if (userId != data.userId) {
-      res
-        .status(403)
-        .json({ message: "TOKEN IS NOT COMPATIBLE WITH USER" });
+        .json({ message: "Invalid token payload: user ID is missing." });
       return;
     }
 
@@ -39,7 +32,7 @@ export class TaskController {
         ...data,
         userId: userId,
       });
-      handleSuccess(res, 201, "Created Successfully", {
+      handleSuccess(res, 201, "Task created successfully", {
         ...dataTask,
         password: undefined,
       });
@@ -51,7 +44,7 @@ export class TaskController {
   getAllTasks = async (_req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await this._taskService.getAllTasks();
-      handleSuccess(res, 200, "Success", data);
+      handleSuccess(res, 200, "Tasks retrieved successfully", data);
     } catch (error) {
       handleError(res, error, next);
     }
@@ -63,7 +56,7 @@ export class TaskController {
       if (!userId) {
         res
           .status(401)
-          .json({ message: "Unauthorized: missing user ID in token" });
+          .json({ message: "Unauthorized: user ID missing in token." });
         return;
       }
 
@@ -73,11 +66,29 @@ export class TaskController {
       if (data?.userId !== userId) {
         res
           .status(403)
-          .json({ message: "Forbidden: you cannot see this task" });
+          .json({ message: "Forbidden: you are not allowed to view this task." });
         return;
       }
 
-      handleSuccess(res, 200, "Success", data);
+      handleSuccess(res, 200, "Task retrieved successfully", data);
+    } catch (error) {
+      handleError(res, error, next);
+    }
+  };
+
+  getAllTaskByIdUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = Number(req.user?.id);
+      if (!userId) {
+        res
+          .status(401)
+          .json({ message: "Unauthorized: user ID missing in token." });
+        return;
+      }
+      const data = await this._taskService.getAllTaskByIdUser(userId);
+
+      handleSuccess(res, 200, "Task retrieved successfully", data);
+
     } catch (error) {
       handleError(res, error, next);
     }
@@ -89,7 +100,7 @@ export class TaskController {
       if (!userId) {
         res
           .status(401)
-          .json({ message: "Unauthorized: missing user ID in token" });
+          .json({ message: "Unauthorized: user ID missing in token." });
         return;
       }
 
@@ -101,12 +112,12 @@ export class TaskController {
       if (task?.userId !== userId) {
         res
           .status(403)
-          .json({ message: "Forbidden: you cannot modify this task" });
+          .json({ message: "Forbidden: you are not allowed to update this task." });
         return;
       }
 
       const updatedTask = await this._taskService.updateTaskById(id, data);
-      handleSuccess(res, 200, "Task Updated Successfully", updatedTask);
+      handleSuccess(res, 200, "Task updated successfully", updatedTask);
     } catch (error) {
       handleError(res, error, next);
     }
@@ -118,7 +129,7 @@ export class TaskController {
       if (!userId) {
         res
           .status(401)
-          .json({ message: "Unauthorized: missing user ID in token" });
+          .json({ message: "Unauthorized: user ID missing in token." });
         return;
       }
 
@@ -129,7 +140,7 @@ export class TaskController {
       if (task?.userId !== userId) {
         res
           .status(403)
-          .json({ message: "Forbidden: you cannot Delete this task" });
+          .json({ message: "Forbidden: you are not allowed to delete this task." });
         return;
       }
 

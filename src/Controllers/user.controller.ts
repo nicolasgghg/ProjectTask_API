@@ -21,7 +21,7 @@ export class UserController {
     const data = req.body;
     try {
       const dataUser = await this._userService.createUser(data);
-      handleSuccess(res, 200, "Created Successfully", {
+      handleSuccess(res, 200, "User created successfully", {
         ...dataUser,
         password: undefined,
       });
@@ -33,7 +33,7 @@ export class UserController {
   getAllUsers = async (_req: Request, res: Response, next: NextFunction) => {
     try {
       const data = await this._userService.getAllUsers();
-      handleSuccess(res, 200, "Success", data);
+      handleSuccess(res, 200, "Users retrieved successfully", data);
     } catch (error) {
       handleError(res, error, next);
     }
@@ -43,20 +43,20 @@ export class UserController {
     try {
       const id = Number(req.params.id);
       const data = await this._userService.getUserById(id, req);
-      handleSuccess(res, 200, "Success", {...data, password : null});
+      handleSuccess(res, 200, "User retrieved successfully", { ...data, password: null });
     } catch (error) {
       handleError(res, error, next);
     }
   };
 
   updateUserById = async (req: Request, res: Response, next: NextFunction) => {
-    const data = (req.body = {
+    const data = {
       ...req.body,
       id: Number(req.user?.id as number),
-    });
+    };
     try {
       const updatedUserData = await this._userService.updateUserById(data);
-      handleSuccess(res, 200, "User Updated Successfully", {...updatedUserData, password: null});
+      handleSuccess(res, 200, "User updated successfully", { ...updatedUserData, password: null });
     } catch (error) {
       handleError(res, error, next);
     }
@@ -70,8 +70,6 @@ export class UserController {
       handleError(res, error, next);
     }
   };
-  
-  
 
   authenticateUser = async (
     req: Request,
@@ -82,12 +80,12 @@ export class UserController {
       const { email, password } = req.body;
       if (!email || !password)
         throw new AppError(
-          "E-mail and Password is mandatory",
+          "Email and Password are required",
           202,
           "INVALID_DATA"
         );
       const token = await this._userService.authenticateUser(email, password);
-      return handleSuccess(res, 200, "Authentication Successful", { token });
+      return handleSuccess(res, 200, "Authentication successful", { token });
     } catch (error) {
       handleError(res, error, next);
     }
@@ -102,13 +100,13 @@ export class UserController {
       const authHeader = req.headers.authorization;
 
       if (!authHeader) {
-        throw new AppError("Authorization header missing", 401, "Missing Date");
+        throw new AppError("Authorization header missing", 401, "Missing Data");
       }
 
       const token = authHeader.split(" ")[1];
 
       if (!token) {
-        throw new AppError("Token is missing", 401, "Missing Date");
+        throw new AppError("Token is missing", 401, "Missing Data");
       }
 
       const result = await this._userService.authenticateUserByToken(token);

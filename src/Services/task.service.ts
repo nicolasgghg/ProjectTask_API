@@ -26,6 +26,10 @@ export class TaskService {
         return await this._taskRepository.findById(id);
     }
 
+    async getAllTaskByIdUser(userId: number) {
+        return await this._taskRepository.findManyForUser(userId);
+    }
+
     async updateTaskById(id: number, data: UpdateTaskDto) {
         await this.taskExist(id)
         return await this._taskRepository.updateById(id, data);
